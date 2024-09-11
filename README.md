@@ -65,6 +65,24 @@ The system will display:
 - A periodized training plan
 - A detailed weekly training schedule
 
+ ### Strength & Conditioning Plans
+
+The system now offers detailed, level-specific Strength & Conditioning plans using various methodologies:
+
+- Dynamic Effort Method
+- Conjugate Method (Westside Barbell)
+- Linear Periodization
+- Undulating Periodization
+- Block Periodization
+
+Each plan is tailored to the user's skill level (beginner, intermediate, advanced) and includes specific blocks focusing on:
+
+- Hypertrophy (muscle building)
+- Strength development
+- Power and explosiveness
+
+Plans provide detailed weekly schedules, exercise recommendations, and guidelines for progression over a 12-week period.
+
 ## How It Works
 
 1. **User Management**: The system uses SQLite to store user profiles, including their skills, level, and technique ratings.
