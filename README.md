@@ -2,41 +2,38 @@
 
 ## Overview
 
-This project implements a recommender system for Brazilian Jiu-Jitsu (BJJ) techniques. It uses a combination of user input, collaborative filtering, and a knowledge base of BJJ techniques to provide personalized recommendations and create training plans for practitioners.
+The BJJ Technique Recommender System is a Python-based application that provides personalized Brazilian Jiu-Jitsu (BJJ) training recommendations. It uses collaborative filtering and matrix factorization to suggest techniques based on user preferences and skill level. The system also generates periodized training plans and weekly schedules, taking into account the user's weaknesses or specific training goals.
 
 ## Features
 
-- Personalized technique recommendations based on user preferences and skill level
+- Personalized technique recommendations using matrix factorization
 - Periodized training plan generation
-- Weekly training schedule creation
-- Categorization of techniques by body area and gi/no-gi variants
-- Simple user database for collaborative filtering
+- Detailed weekly training schedule creation
+- Incorporation of user-specified weaknesses or training goals
+- Graphical User Interface (GUI) for easy interaction
+- Comprehensive explanations of recommended techniques and training focus areas
 
 ## Requirements
 
 - Python 3.7+
 - NumPy
 - scikit-learn
+- PyQt5
+- pandas
+- scikit-surprise
 
-Install the required packages using:
+## Installation
 
-pip install numpy scikit-learn
+1. Clone this repository:
+   ```
+   git clone https://github.com/yourusername/bjj-recommender.git
+   cd bjj-recommender
+   ```
 
-
-## Project Structure
-
-- `Recommender_4_bjj.py`: Main script containing the implementation
-- `README.md`: This file, containing project documentation
-
-## Key Components
-
-1. `techniques`: Dictionary of BJJ techniques categorized by body area and gi/no-gi variants
-2. `users`: Simple database of user profiles for collaborative filtering
-3. `get_user_input()`: Function to collect user preferences and skill level
-4. `create_user_vector()`: Creates a binary vector representation of user techniques
-5. `recommend_techniques()`: Generates technique recommendations using collaborative filtering
-6. `create_periodized_plan()`: Generates a periodized training plan based on user level
-7. `create_weekly_plan()`: Creates a detailed weekly training schedule
+2. Install the required packages:
+   ```
+   pip install numpy scikit-learn PyQt5 pandas scikit-surprise
+   ```
 
 ## Usage
 
@@ -45,27 +42,40 @@ Run the main script:
 python Recommender_4_bjj.py
 
 
-The script will prompt the user for input, generate recommendations, and display a training plan.
+This will launch the GUI application. Follow these steps:
+
+1. Enter your primary BJJ skill (e.g., "guard", "submissions", "takedowns")
+2. Select your BJJ level (Beginner, Intermediate, Advanced)
+3. Input your preferred techniques, separated by commas
+4. List your weaknesses or specific training goals, separated by commas
+5. Click "Get Recommendations"
+
+The system will then display:
+- Recommended techniques with explanations
+- A periodized training plan
+- A detailed weekly training schedule
 
 ## How It Works
 
-1. The user inputs their primary BJJ skill, level, and preferred techniques.
-2. The system creates a user vector based on the input.
-3. Collaborative filtering is used to find similar users and recommend techniques.
-4. A periodized training plan is generated based on the user's skill level.
-5. A detailed weekly training schedule is created, incorporating recommended techniques.
+1. **Matrix Factorization Recommender**: Uses collaborative filtering to suggest techniques based on user preferences and similar users' data.
+
+2. **Periodized Training Plan**: Generates a multi-week plan tailored to the user's skill level and incorporating focus on specified weaknesses.
+
+3. **Weekly Training Schedule**: Creates a detailed weekly plan with specific focus areas for each day, including recommended techniques and explanations.
+
+4. **Weakness Integration**: Incorporates user-specified weaknesses or goals into both the periodized plan and weekly schedule.
 
 ## Customization
 
-You can customize various aspects of the system:
-- Add or modify techniques in the `techniques` dictionary
-- Adjust the user database in the `users` list
-- Modify the training plan structure in `create_periodized_plan()` and `create_weekly_plan()`
+You can customize the system by modifying:
+- The `techniques` dictionary to add or change BJJ techniques
+- The `users` list to expand the user database for better recommendations
+- The `create_periodized_plan` and `create_weekly_plan` functions to adjust training structures
 
 
 ## Contributing
 
-Contributions to improve the recommender system are welcome. Please follow these steps:
+Contributions to improve the BJJ Technique Recommender System are welcome. Please follow these steps:
 1. Fork the repository
 2. Create a new branch for your feature
 3. Commit your changes
@@ -75,4 +85,10 @@ Contributions to improve the recommender system are welcome. Please follow these
 ## License
 
 This project is open-source and available under the MIT License.
+
+## Acknowledgments
+
+- Thanks to the scikit-surprise team for their matrix factorization implementation
+- PyQt5 for providing the GUI framework
+- The BJJ community for inspiration and technique knowledge
 
