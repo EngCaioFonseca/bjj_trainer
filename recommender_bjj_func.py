@@ -26,6 +26,13 @@ users = [
     (3, "takedowns", "advanced", ["Gi: Double Leg", "No-Gi: Ankle Pick"])
 ]
 
+S_C_METHODS = {
+    "Dynamic Effort Method": "Focuses on moving submaximal weights with maximum speed to develop explosive strength.",
+    "Conjugate Method (Westside Barbell)": "Rotates between maximal effort and dynamic effort days, focusing on variety in exercise selection.",
+    "Linear Periodization": "Progressively increases intensity while decreasing volume over time.",
+    "Undulating Periodization": "Varies volume and intensity more frequently, often within the same week.",
+    "Block Periodization": "Focuses on specific adaptations (e.g., hypertrophy, strength, power) in distinct blocks."
+}
 class Database:
     def __init__(self, db_name='bjj_recommender.db'):
         self.conn = sqlite3.connect(db_name)
@@ -238,6 +245,20 @@ class BJJRecommenderGUI(QWidget):
         self.setWindowTitle('BJJ Technique Recommender')
         self.show()
 
+                # Strength & Conditioning section
+        sc_layout = QHBoxLayout()
+        sc_layout.addWidget(QLabel('Strength & Conditioning Method:'))
+        self.sc_method_input = QComboBox()
+        self.sc_method_input.addItems(list(S_C_METHODS.keys()))
+        sc_layout.addWidget(self.sc_method_input)
+        main_layout.addLayout(sc_layout)
+
+        # S&C Recommendation button
+        self.sc_recommend_button = QPushButton('Get S&C Recommendations')
+        self.sc_recommend_button.clicked.connect(self.get_sc_recommendations)
+        main_layout.addWidget(self.sc_recommend_button)
+
+
 
     def login(self):
         username = self.username_input.text()
@@ -272,6 +293,22 @@ class BJJRecommenderGUI(QWidget):
         else:
             QMessageBox.warning(self, 'Error', 'Invalid technique name')
 
+    def get_sc_recommendations(self):
+        if not self.user_id:
+            QMessageBox.warning(self, 'Error', 'Please log in first')
+            return
+        
+        selected_method = self.sc_method_input.currentText()
+        skill, level = self.db.get_user_info(self.user_id)
+        
+        sc_plan = create_sc_plan(selected_method, skill, level)
+        
+        results = f"Strength & Conditioning Plan ({selected_method}):\n\n"
+        results += sc_plan
+        
+        self.results_display.setText(results)
+
+
     def get_recommendations(self):
         if not self.user_id:
             QMessageBox.warning(self, 'Error', 'Please log in first')
@@ -283,7 +320,9 @@ class BJJRecommenderGUI(QWidget):
         recommended_techniques = self.recommender.recommend_techniques(self.user_id)
         periodized_plan = create_periodized_plan(skill, level, weaknesses)
         weekly_plan = create_weekly_plan(skill, level, recommended_techniques, weaknesses)
-
+        
+        selected_method = self.sc_method_input.currentText()
+        sc_plan = create_sc_plan(selected_method, skill, level)
 
         results = f"Recommended techniques:\n"
         for technique in recommended_techniques:
@@ -296,8 +335,180 @@ class BJJRecommenderGUI(QWidget):
         results += "\nWeekly Training Plan:\n"
         for session in weekly_plan:
             results += f"{session}\n"
+        
+        results += f"\nStrength & Conditioning Plan ({selected_method}):\n"
+        results += sc_plan
 
         self.results_display.setText(results)
+
+
+def create_sc_plan(method, skill, level):
+    plan = f"{method} Plan for {skill.capitalize()} focused {level.capitalize()} BJJ practitioner:\n\n"
+    
+    if method == "Dynamic Effort Method":
+        plan += dynamic_effort_method(level)
+    elif method == "Conjugate Method (Westside Barbell)":
+        plan += conjugate_method(level)
+    elif method == "Linear Periodization":
+        plan += linear_periodization(level)
+    elif method == "Undulating Periodization":
+        plan += undulating_periodization(level)
+    elif method == "Block Periodization":
+        plan += block_periodization(level)
+    
+    plan += "\nNote: Adjust weights based on your current strength levels and recovery ability."
+    plan += "\nAlways warm up properly and maintain good form throughout your workouts."
+    plan += "\nConsult with a certified strength and conditioning coach to tailor this plan to your specific needs."
+    
+    return plan
+
+
+def dynamic_effort_method(level):
+    plan = "12-Week Plan:\n\n"
+    
+    olympic_lifts = ["Power Clean", "Hang Snatch", "Clean and Jerk"]
+    compound_exercises = ["Squat", "Bench Press", "Deadlift", "Overhead Press"]
+    accessory_exercises = ["Pull-ups", "Dips", "Barbell Row", "Lunges"]
+    
+    if level == "beginner":
+        intensity = "40-50% 1RM"
+        volume = "3x3"
+    elif level == "intermediate":
+        intensity = "50-60% 1RM"
+        volume = "4x3"
+    else:  # advanced
+        intensity = "60-70% 1RM"
+        volume = "5x3"
+    
+    plan += f"Weeks 1-4 (Speed Strength Focus):\n"
+    plan += f"- Monday: {random.choice(olympic_lifts)} {volume} @ {intensity}, Speed Squat 8x2 @ {intensity}, {random.choice(accessory_exercises)} 3x10\n"
+    plan += f"- Wednesday: {random.choice(olympic_lifts)} {volume} @ {intensity}, Speed Bench 8x3 @ {intensity}, {random.choice(accessory_exercises)} 3x10\n"
+    plan += f"- Friday: {random.choice(olympic_lifts)} {volume} @ {intensity}, Speed Deadlift 8x2 @ {intensity}, {random.choice(accessory_exercises)} 3x10\n\n"
+    
+    plan += "Weeks 5-8: Increase intensity by 5%, reduce rest times\n"
+    plan += "Weeks 9-12: Increase bar speed, maintain intensity\n"
+    
+    return plan
+
+def conjugate_method(level):
+    plan = "12-Week Plan:\n\n"
+    
+    max_effort_exercises = ["Box Squat", "Floor Press", "Rack Deadlift", "Good Morning"]
+    dynamic_effort_exercises = ["Speed Squat", "Speed Bench", "Speed Deadlift"]
+    olympic_lifts = ["Power Clean", "Hang Snatch", "Clean and Jerk"]
+    accessory_exercises = ["Pull-ups", "Dips", "Barbell Row", "Lunges"]
+    
+    if level == "beginner":
+        me_intensity = "80-85% 1RM"
+        de_intensity = "50-60% 1RM"
+    elif level == "intermediate":
+        me_intensity = "85-90% 1RM"
+        de_intensity = "60-70% 1RM"
+    else:  # advanced
+        me_intensity = "90-95% 1RM"
+        de_intensity = "70-80% 1RM"
+    
+    plan += "Week 1 Example:\n"
+    plan += f"- Monday (ME Lower): {random.choice(max_effort_exercises)} 5x3 @ {me_intensity}, {random.choice(olympic_lifts)} 3x3, {random.choice(accessory_exercises)} 3x10\n"
+    plan += f"- Wednesday (DE Upper): {random.choice(dynamic_effort_exercises)} 8x3 @ {de_intensity}, {random.choice(olympic_lifts)} 3x3, {random.choice(accessory_exercises)} 3x10\n"
+    plan += f"- Friday (DE Lower): {random.choice(dynamic_effort_exercises)} 8x2 @ {de_intensity}, {random.choice(olympic_lifts)} 3x3, {random.choice(accessory_exercises)} 3x10\n\n"
+    
+    plan += "Rotate exercises every 1-3 weeks for ME days\n"
+    plan += "Gradually increase bar speed and/or weight for DE days\n"
+    
+    return plan
+
+def linear_periodization(level):
+    plan = "12-Week Plan:\n\n"
+    
+    olympic_lifts = ["Power Clean", "Hang Snatch", "Clean and Jerk"]
+    compound_exercises = ["Squat", "Bench Press", "Deadlift", "Overhead Press"]
+    accessory_exercises = ["Pull-ups", "Dips", "Barbell Row", "Lunges"]
+    
+    if level == "beginner":
+        hypertrophy = "3x10-12 @ 65-70% 1RM"
+        strength = "4x6-8 @ 75-80% 1RM"
+        power = "5x3-5 @ 80-85% 1RM"
+    elif level == "intermediate":
+        hypertrophy = "4x10-12 @ 70-75% 1RM"
+        strength = "5x6-8 @ 77-82% 1RM"
+        power = "6x3-5 @ 82-87% 1RM"
+    else:  # advanced
+        hypertrophy = "5x10-12 @ 72-77% 1RM"
+        strength = "6x6-8 @ 80-85% 1RM"
+        power = "7x3-5 @ 85-90% 1RM"
+    
+    plan += f"Weeks 1-4 (Hypertrophy):\n"
+    plan += f"- Monday: {random.choice(olympic_lifts)} {hypertrophy}, {random.choice(compound_exercises)} {hypertrophy}, {random.choice(accessory_exercises)} 3x12\n"
+    plan += f"- Wednesday: {random.choice(olympic_lifts)} {hypertrophy}, {random.choice(compound_exercises)} {hypertrophy}, {random.choice(accessory_exercises)} 3x12\n"
+    plan += f"- Friday: {random.choice(olympic_lifts)} {hypertrophy}, {random.choice(compound_exercises)} {hypertrophy}, {random.choice(accessory_exercises)} 3x12\n\n"
+    
+    plan += f"Weeks 5-8 (Strength): Same structure, but {strength}\n"
+    plan += f"Weeks 9-12 (Power): Same structure, but {power}\n"
+    
+    return plan
+
+def undulating_periodization(level):
+    plan = "Weekly Plan (repeat for 12 weeks):\n\n"
+    
+    olympic_lifts = ["Power Clean", "Hang Snatch", "Clean and Jerk"]
+    compound_exercises = ["Squat", "Bench Press", "Deadlift", "Overhead Press"]
+    accessory_exercises = ["Pull-ups", "Dips", "Barbell Row", "Lunges"]
+    
+    if level == "beginner":
+        hypertrophy = "3x10-12 @ 65-70% 1RM"
+        strength = "4x6-8 @ 75-80% 1RM"
+        power = "5x3-5 @ 80-85% 1RM"
+    elif level == "intermediate":
+        hypertrophy = "4x10-12 @ 70-75% 1RM"
+        strength = "5x6-8 @ 77-82% 1RM"
+        power = "6x3-5 @ 82-87% 1RM"
+    else:  # advanced
+        hypertrophy = "5x10-12 @ 72-77% 1RM"
+        strength = "6x6-8 @ 80-85% 1RM"
+        power = "7x3-5 @ 85-90% 1RM"
+    
+    plan += f"- Monday (Hypertrophy): {random.choice(olympic_lifts)} {hypertrophy}, {random.choice(compound_exercises)} {hypertrophy}, {random.choice(accessory_exercises)} 3x12\n"
+    plan += f"- Wednesday (Strength): {random.choice(olympic_lifts)} {strength}, {random.choice(compound_exercises)} {strength}, {random.choice(accessory_exercises)} 3x10\n"
+    plan += f"- Friday (Power): {random.choice(olympic_lifts)} {power}, {random.choice(compound_exercises)} {power}, {random.choice(accessory_exercises)} 3x8\n"
+    
+    plan += "\nRotate exercises weekly while maintaining the undulating structure\n"
+    
+    return plan
+
+def block_periodization(level):
+    plan = "12-Week Plan:\n\n"
+    
+    olympic_lifts = ["Power Clean", "Hang Snatch", "Clean and Jerk"]
+    compound_exercises = ["Squat", "Bench Press", "Deadlift", "Overhead Press"]
+    accessory_exercises = ["Pull-ups", "Dips", "Barbell Row", "Lunges"]
+    
+    if level == "beginner":
+        hypertrophy = "3x10-12 @ 65-70% 1RM"
+        strength = "4x6-8 @ 75-80% 1RM"
+        power = "5x3-5 @ 80-85% 1RM"
+    elif level == "intermediate":
+        hypertrophy = "4x10-12 @ 70-75% 1RM"
+        strength = "5x6-8 @ 77-82% 1RM"
+        power = "6x3-5 @ 82-87% 1RM"
+    else:  # advanced
+        hypertrophy = "5x10-12 @ 72-77% 1RM"
+        strength = "6x6-8 @ 80-85% 1RM"
+        power = "7x3-5 @ 85-90% 1RM"
+    
+    plan += f"Weeks 1-4 (Hypertrophy Block):\n"
+    plan += f"- Monday: {random.choice(olympic_lifts)} {hypertrophy}, {random.choice(compound_exercises)} {hypertrophy}, {random.choice(accessory_exercises)} 3x12\n"
+    plan += f"- Wednesday: {random.choice(olympic_lifts)} {hypertrophy}, {random.choice(compound_exercises)} {hypertrophy}, {random.choice(accessory_exercises)} 3x12\n"
+    plan += f"- Friday: {random.choice(olympic_lifts)} {hypertrophy}, {random.choice(compound_exercises)} {hypertrophy}, {random.choice(accessory_exercises)} 3x12\n\n"
+    
+    plan += f"Weeks 5-8 (Strength Block): Same structure, but {strength}\n"
+    plan += f"Weeks 9-12 (Power Block): Same structure, but {power}\n"
+    
+    plan += "\nFocus on increasing weight and/or volume each week within each block\n"
+    
+    return plan
+
+
 
 def create_periodized_plan(skill, level, weaknesses):
     weeks = 4 if level == "beginner" else 6 if level == "intermediate" else 8
