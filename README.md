@@ -1,5 +1,8 @@
 # BJJ Technique Recommender System
 
+![recommender_bjj](https://github.com/user-attachments/assets/78171986-4a50-4c5a-a597-01621bb9bd92)
+
+
 ## Overview
 
 The BJJ Technique Recommender System is an advanced Python application designed to provide personalized Brazilian Jiu-Jitsu (BJJ) training recommendations. It utilizes collaborative filtering and matrix factorization to suggest techniques based on user preferences, skill level, and feedback. The system also generates periodized training plans and weekly schedules, taking into account the user's weaknesses or specific training goals.
