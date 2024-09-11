@@ -62,19 +62,6 @@ You can customize various aspects of the system:
 - Adjust the user database in the `users` list
 - Modify the training plan structure in `create_periodized_plan()` and `create_weekly_plan()`
 
-## Limitations
-
-- The current implementation uses a simple user database. For a production system, consider using a proper database.
-- The collaborative filtering algorithm is basic and may not scale well for large user bases.
-- The system does not account for technique difficulty or prerequisites.
-
-## Future Improvements
-
-- Implement a more sophisticated recommendation algorithm (e.g., matrix factorization)
-- Add a graphical user interface for easier interaction
-- Incorporate technique difficulty levels and prerequisites
-- Implement user authentication and profile management
-- Add functionality to track user progress and adjust recommendations over time
 
 ## Contributing
 
